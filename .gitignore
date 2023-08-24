@@ -1,6 +1,5 @@
-./data_
-./data_/*
-./backend/vendor
-./backend/.env
-./frontend/node_modules
-./key
+data_
+backend/vendor
+backend/.env
+frontend/node_modules
+key

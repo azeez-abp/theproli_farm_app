@@ -1,0 +1,89 @@
+FROM php:8.1.6-fpm 
+
+ENV LARAVEL_PORT=801
+# ENV PHP_OPCACHE_ENABLE=1
+# ENV PHP_OPCACHE_ENABLE_CLI=0
+# ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
+# ENV PHP_OPCACHE_REVALIDATE_FREQ=1
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+        build-essential \
+        libpng-dev \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
+        locales \
+        jpegoptim optipng pngquant gifsicle \
+        vim \
+        nano \
+        git \ 
+        logrotate \
+        && docker-php-ext-configure gd --with-freetype --with-jpeg \
+        && docker-php-ext-install -j$(nproc) gd
+
+#  unzip \
+
+#  curl 
+RUN apt-get update && apt-get install -y libpq-dev libcurl4-gnutls-dev  openssl
+#nginx
+
+RUN docker-php-ext-install pdo pdo_mysql bcmath curl opcache
+
+RUN  apt-get update  \
+        && pecl install -o -f redis \
+        && rm -rf /tmp/pear \
+        && docker-php-ext-enable redis
+
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+
+# RUN    apt-get update \
+#         &&apt-get install -y nginx
+
+#Add user for laravel application 
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -s /bin/bash -g www www
+
+# RUN composer install
+
+# Copy existing application directory contents
+RUN pwd
+COPY /c/Users/BONJOUREX/Desktop/Code-project/project6/backend/ /var/www/
+
+RUN pecl install mongodb
+RUN echo "extension=mongodb.so" >> /usr/local/etc/php/php.ini
+RUN  chmod -R 755  /var/www/storage 
+RUN  chmod -R 644 /var/www/bootstrap/cache 
+RUN touch /usr/local/var/log/php-fpm.log
+#RUN chmod -R 755 /var/www/vendor  too long process
+
+# Copy existing application directory permissions
+COPY --chown=www:www . /var/www
+
+#RUN chmod -R u+rwx,g+rw,o+r /var /usr
+# Set working directory
+WORKDIR /var/www
+
+# Change current user to www
+
+RUN chmod +x laravel_setup.sh
+
+
+#RUN chmod +rw /var  usermod -a -G admin-group azeez add azeez to admin-group
+
+COPY laravel_setup.sh /var/www
+USER www
+
+EXPOSE 9000
+#ENTRYPOINT [ "executable" ]
+ENTRYPOINT [ "./laravel_setup.sh" ]
+
+
+
+#CMD [ "cmd", "/C", "deploy.bat" ]
+# Expose port 9000 and start php-fpm server

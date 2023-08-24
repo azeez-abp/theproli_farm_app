@@ -1,0 +1,154 @@
+version: "3.8"
+services:
+  ######Nginx servie####################################
+  backend_server_0:
+    build:
+      context: ./
+      dockerfile: Dockerfile.ngin
+    restart: unless-stopped
+    container_name: farm_server_container_0
+    working_dir: /var/www
+    ports:
+      - "801:80"
+      - "4431:443"
+    volumes:
+      - ./backend:/var/www
+      #- ./docker/nginx/sites-available/:/etc/nginx/sites-available/
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    #     - ./nginx/ssl.sh:/etc/nginx/ssl/ssl.sh
+    depends_on:
+      - php_runtime_0
+      - _db_0
+    command:
+
+    networks:
+      - app-network_0
+
+  #####################3#
+  php_runtime_0:
+    build:
+      context: ./
+      dockerfile: dockerfile.php
+    container_name: "php_runtime_container_0"
+    working_dir: /var/www
+    depends_on:
+      - _db_0
+    environment:
+      #ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_HOST: _db_0
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev_0
+      SERVICE_NAME: php_0
+      XDEBUG: true
+      #PHP_IDE_CONFIG: "serverName=phpstorm-server" #This is required for PhpStorm only for path mappings
+      #REMOTE_HOST: "<HOSTIP>" # If not set the default is 'host.docker.internal' which will work on OSX and windows
+    ports:
+      - 9000:9000
+    volumes:
+      - ./docker/php/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/php/php-fpm.d/:/usr/local/etc/php-fpm.d/
+      - ./backend/:/var/www/
+    tty: true
+    #command: ["sh", "-c", "/var/www/deploy.sh"]
+
+    networks:
+      - app-network_0
+  # #
+  # #########################
+  frontend_0:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react-frontend-app_0
+    tty: true
+    ports:
+      - 3000:3000
+    volumes:
+      - /c/Users/BONJOUREX/Desktop/Code-project/project6/frontend:/var/www
+    depends_on:
+      - _db_0
+      - php_runtime_0
+
+    networks:
+      - app-network_0
+  # #########################
+  _db_0:
+    image: mysql:8.0.11
+    platform: linux/x86_64
+    container_name: mysql_db
+    restart: unless-stopped
+    tty: true #eletypewriter
+    ports:
+      - "6305:3306"
+    environment:
+      #ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_HOST: ${DB_HOST}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: _db
+
+    volumes:
+      - ./docker//mysql/mysql.cnf:/etc/mysql/conf.d/
+      - ./data_/mysql:/var/lib/mysql
+    #   - ./docker/use/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network_0
+
+  # #phpmyadmin
+  _pma_0:
+    depends_on:
+      - _db_0
+    image: phpmyadmin/phpmyadmin
+    links:
+      - "_db_0"
+    container_name: pma_view_db_0
+    environment:
+      - PMA_ARBITRARY= 1
+      - PMA_HOST=${DB_HOST} #container name of the db to connect to
+      - PMA_USER=${DB_USERNAME} #the username in the database
+      - PMA_PASSWORD=${DB_PASSWORD} # the password in the database
+      # - PMA_DB=${DB_DATABASE}
+      #- PMA_ROOT_PASSWORD=${DB_ROOT_PASS} #root password of the database
+
+      - PMA_PORT=3306 # port of the database, the original port
+
+    networks:
+      - app-network_0
+    ports:
+      - 9998:80
+    tty: true
+  #redis
+  redis_0:
+    image: redis:alpine
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+    ports:
+      - 6379:6379
+
+  #mongo
+  mongodb_0:
+    image: mongo:latest
+    container_name: mongoDB_0
+    environment:
+      #MONGO_INITDB ${MONGO_DB_HOST}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD}
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_0_data:/mongo_data/db
+    networks:
+      - app-network_0
+
+#
+volumes:
+  mongodb_0_data:
+
+networks:
+  app-network_0:
+    driver: bridge

@@ -1,0 +1,56 @@
+pecl install mongodb
+for window downlaod the extension
+composer require mongodb/mongodb
+
+Given that you're running PHP-FPM inside a Docker container where the user is 
+already set to www, you don't need to define a user and group under [www](pool name) section in the 
+PHP-FPM configuration. Instead, the Docker container's user settings will be used, 
+and you can leave the [www] section out.
+
+Here's an example of how your www.conf file could look like when you're running 
+PHP-FPM as a non-root user named www in a Docker container:
+ini
+```
+; No [www] section needed
+; You can leave it out entirely
+```
+```
+The .bashrc file is a script that's executed whenever a new interactive non-login shell session is started in the Bash shell. It's commonly used to customize your shell environment by setting environment variables, defining aliases, configuring shell prompts, and more.
+
+Here's an example of a .bashrc file along with explanations of some common configurations you might find in it:
+
+# Set the PATH environment variable to include custom directories
+export PATH="$PATH:/usr/local/bin:/usr/sbin"
+
+# Set the PS1 (shell prompt) to a custom format
+PS1="\[\e[32m\]\u@\h\[\e[m\]:\[\e[34m\]\w\[\e[m\]\$ "
+
+# Define useful aliases
+alias ll="ls -l"
+alias cls="clear"
+
+# Set the default editor
+export EDITOR="nano"
+
+# Custom functions
+greet() {
+    echo "Hello, $USER!"
+}
+
+# Load nvm (Node Version Manager) if it's installed
+[ -s "$HOME/.nvm/nvm.sh" ] && \. "$HOME/.nvm/nvm.sh"  # This loads nvm
+
+https://github.com/Cyber-Duck/php-fpm-laravel/blob/8.1/docker-entrypoint.sh
+```
+docker ps -a --format "{{json .}}
+docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+
+docker container prune
+docker image prune
+docker rm -f $(docker ps -a -q)
+docker rmi -f $(docker images -q)
+docker network prune
+docker-compose up -d -V
+docker-compose down --rmi all
+docker-compose build --no-cache
+docker-compose up -d

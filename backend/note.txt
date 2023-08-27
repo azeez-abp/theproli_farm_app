@@ -1,0 +1,68 @@
+Mongdb set up 
+composer require jenssegers/mongodb
+composer require mongodb/mongodb
+
+configure the db in config/database.php
+'mongodb' => [
+    'driver' => 'mongodb',
+    'host' => env('MONGODB_HOST', 'localhost'),
+    'port' => env('MONGODB_PORT', 27017),
+    'database' => env('MONGODB_DATABASE', 'your_database'),
+    'username' => env('MONGODB_USERNAME', ''),
+    'password' => env('MONGODB_PASSWORD', ''),
+    'options' => [
+        'database' => 'admin' // sets the authentication database required by mongo 3
+    ]
+],
+
+php artisan make:model MongoItem
+
+
+namespace App\Models;
+
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+
+class Student extends Eloquent
+{
+    protected $connection = 'mongodb';
+    protected $collection = 'students'; // Name of your MongoDB collection
+    protected $fillable = ['name', 'age', 'grade']; // Fields in your collection
+}
+
+on any file 
+use App\Models\MongoItem;
+
+$items = MongoItem::where('field_name', 'field_value')->get();
+
+foreach ($items as $item) {
+    echo $item->field_name . "\n";
+}
+
+///////////////////////////////////////////////////////////////////////
+composer update --with-all-dependencies
+////////////////////////////////////////////////////////////////////////Solvin cors
+composer require fruitcake/laravel-cors:^2.1 --with-all-dependencies  (-W)
+composer require barryvdh/laravel-cors:^0.11 --with-all-dependencies
+
+After installing the package, add the Cors middleware to the $middleware array in the app/Http/Kernel.php file:
+
+protected $middleware = [
+    // ...
+    \Fruitcake\Cors\HandleCors::class,
+];
+
+config/core
+
+return [
+    'paths' => ['api/*'],
+    'allowed_methods' => ['*'],
+    'allowed_origins' => ['http://local:3000'], // Set your allowed origins here
+    'allowed_origins_patterns' => [],
+    'allowed_headers' => ['*'],
+    'exposed_headers' => [],
+    'max_age' => 0,
+    'supports_credentials' => false,
+];
+
+
+

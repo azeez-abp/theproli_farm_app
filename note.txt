@@ -44,7 +44,7 @@ https://github.com/Cyber-Duck/php-fpm-laravel/blob/8.1/docker-entrypoint.sh
 ```
 docker ps -a --format "{{json .}}
 docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
-
+docker-compose -f docker-compose.yml config
 docker container prune
 docker image prune
 docker rm -f $(docker ps -a -q)

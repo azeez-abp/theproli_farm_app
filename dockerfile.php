@@ -138,9 +138,10 @@ RUN usermod -u 1000 www-data
 
 WORKDIR /var/www
 
-COPY ./docker/php/docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-RUN ln -s /usr/local/bin/docker-entrypoint.sh /
+#COPY ./docker/php/docker-entrypoint.sh /usr/local/bin/
+COPY ./docker/php/laravel_setup.sh /var/www/
+RUN chmod +x /var/www/laravel_setup.sh 
+#RUN ln -s /usr/local/bin/laravel_setup.sh /var/www
 EXPOSE 9000
-ENTRYPOINT ["docker-entrypoint.sh"]
-#CMD ["php-fpm"]
+ENTRYPOINT ["./laravel_setup.sh"]
+#CMD [ "./laravel_setup.sh" ]

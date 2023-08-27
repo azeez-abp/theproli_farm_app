@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+//use App\Http\Middleware\CorsMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get("/post", function () {
-    return response()->json(["ok" => "Recieved"]);
+Route::post("/post", function () {
+    return response()->json(["ok" => "Recieved welcometyuio"]);
 });

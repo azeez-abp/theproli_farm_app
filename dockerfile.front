@@ -1,5 +1,6 @@
 FROM node:alpine
 WORKDIR /var/www
-COPY .frontend/ /var/www/
+COPY ./frontend/ /var/www/
 RUN npm install
+EXPOSE 3000
 CMD npm start

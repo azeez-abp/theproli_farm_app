@@ -1,6 +1,9 @@
 # Theproli FARM APPLICATION
 
-# start your docker engine and docker-compose up
+# Description
+
+- This application is the basic set for runing Laravel-React app in container
+- All the technology included can be found in the docker-compose file the root directory of the project
 
 ## Backend
 

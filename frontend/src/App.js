@@ -18,7 +18,7 @@ const data = {
 //const formData = new URLSearchParams(data);
 
 // URL to the API endpoint
-const url = 'http://localhost:801/api/post';
+const url = 'http://127.0.0.1:801/api/post';
 
 try{
   let response= await fetch(url, {
@@ -59,7 +59,7 @@ try{
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          FRONT END APP WELCOME  {state && state.ok}
+          FRONT END APP WELCOME  {state && state.ok} 
         </p>
        
       </header>

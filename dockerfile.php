@@ -142,6 +142,7 @@ WORKDIR /var/www
 COPY ./docker/php/laravel_setup.sh /var/www/
 RUN chmod +x /var/www/laravel_setup.sh 
 #RUN ln -s /usr/local/bin/laravel_setup.sh /var/www
+COPY ./.env ./backend/.env
 EXPOSE 9000
 ENTRYPOINT ["./laravel_setup.sh"]
 #CMD [ "./laravel_setup.sh" ]

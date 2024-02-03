@@ -18,8 +18,14 @@ class CorsMiddleware
     {
         $response = $next($request);
 
+        $allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+        $origin = request()->header('Origin');
+
+        if (in_array($origin, $allowedOrigins)) {
+            $response->headers->set('Access-Control-Allow-Origin', $origin);
+        }
         // Set CORS headers
-        $response->headers->set('Access-Control-Allow-Origin', 'http://localhost:3000');
+        //$response->headers->set('Access-Control-Allow-Origin', 'http://localhost:3000,http://127.0.0.1:3000');
         $response->headers->set('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Accept,Content-Type,Authorization');
 

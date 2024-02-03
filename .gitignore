@@ -3,6 +3,8 @@ data_mysql
 data_mongo
 backend/vendor
 backend/.env
+
 frontend/node_modules
 key
 .env
+.env.local

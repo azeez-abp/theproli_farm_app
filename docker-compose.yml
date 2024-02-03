@@ -6,6 +6,9 @@ services:
     container_name: mysql_db_container_0
     restart: unless-stopped
     tty: true
+    # links:
+    #   - php_runtime_0 # not conatiner name but service name
+
     ports:
       - 33061:3306
     environment:
@@ -116,13 +119,15 @@ services:
     image: mongo:latest
     container_name: mongoDB_0
     restart: unless-stopped
+    # links:
+    #   - php_runtime_0 # so that php can connect with mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD}
       SERVICE_TAGS: dev_mongo_db_0
       SERVICE_NAME: mongo_db_0
     ports:
-      - 27017:27017
+      - 27018:27017
     volumes:
       - ./data_mongo:/data/db
     networks:

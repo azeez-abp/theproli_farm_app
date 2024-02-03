@@ -7,6 +7,25 @@ already set to www, you don't need to define a user and group under [www](pool n
 PHP-FPM configuration. Instead, the Docker container's user settings will be used, 
 and you can leave the [www] section out.
 
+Here is an example of how you could use Redis cache in a Laravel API to cache user profiles:
+
+use Illuminate\Support\Facades\Cache;
+use App\Models\User;
+
+function getUserProfile($userId) {
+    $userProfile = Cache::get('user_profile_' . $userId);//using redis cache 
+
+    if ($userProfile === null) {
+        // Cache miss, retrieve data from database
+        $user = User::find($userId);
+        $userProfile = $user->profile;
+        
+        // Store data in Redis cache for 5 minutes
+        Cache::put('user_profile_' . $userId, $userProfile, 5);
+    }
+
+    return $userProfile;
+}
 Here's an example of how your www.conf file could look like when you're running 
 PHP-FPM as a non-root user named www in a Docker container:
 ini
@@ -54,3 +73,8 @@ docker-compose up -d -V
 docker-compose down --rmi all
 docker-compose build --no-cache
 docker-compose up -d
+
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/kubernetes.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list
+
+https://packages.cloud.google.com/apt/dists/kubernetes-xenial/main
+
